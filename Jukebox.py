@@ -16,6 +16,18 @@ window.iconphoto(False, PhotoImage(file='icons/icon.png'))
 pygame.mixer.init()
 
 #methods used for controls
+def saving_playlist():
+    list_data = list_box.get(0,END)
+    with open("save.txt", "w", encoding="utf-8") as file:
+        for d in list_data:
+            file.write(d + "\n")
+
+def load_playlist():
+    with open("save.txt", "r", encoding="utf-8") as file:
+        for f in file:
+            list_box.insert(END, f.strip())
+
+        
 def add_song(): # add a single song in playlist
     song = filedialog.askopenfilename(initialdir='songs/',title="Choose A Song", filetypes=(("mp3 Files","*.mp3"),))
     list_box.insert(END, song)
@@ -50,8 +62,6 @@ def play():
     
     song_dur()
 
-    #slider_length = int(duration)
-    #slider.config(to=slider_length, value=0)
 
 global paused # global variable to store if song is paused or not
 paused = False
@@ -88,7 +98,7 @@ def prev_song():
 def song_dur():#method that updates the status bar
     current_time = int(pygame.mixer.music.get_pos()/1000)
 
-    #slider_label.config(text=f'Slider:{int(slider.get())} and Song Pos:{(current_time)}')
+    
     formated_current_time = time.strftime('%M:%S', time.gmtime(current_time))
 
     current_song = list_box.curselection()# this return a number(tuple)
@@ -120,14 +130,9 @@ def song_dur():#method that updates the status bar
         slider.config(value=next_time)
         
     
-    #statusbar.config(text=f'{formated_current_time} / {formated_duration}')
-
-    #slider.config(value=current_time)
-    
     statusbar.after(1000,song_dur)#updating timer after every second
 
 def slide(x):
-    #slider_label.config(text=f'{int(slider.get())} of {int(duration)}')
 
     song = list_box.get(ACTIVE)
     pygame.mixer.music.load(song)
@@ -192,6 +197,7 @@ prev_icon =  PhotoImage(file='icons/backB.png')
 next_icon =   PhotoImage(file='icons/nextB.png')
 play_icon =  PhotoImage(file='icons/playB.png')
 pause_icon = PhotoImage(file='icons/pauseB.png')
+stop_icon = PhotoImage(file='icons/stopB.png')
 
 slider = ttk.Scale(master_frame, from_=0, to=100, orient=HORIZONTAL, value=0, command=slide, length=450)
 slider.grid(row=1,column=0,pady=10)
@@ -199,8 +205,6 @@ slider.grid(row=1,column=0,pady=10)
 vol_slider = ttk.Scale(volume_frame, from_=0, to=1, orient=VERTICAL, value=1, command=volume, length=135)
 vol_slider.pack(pady=10)
 
-#slider_label = Label(window, text=0)
-#slider_label.pack()
 
 # creating a frame to contain buttons
 control_frame = Frame(master_frame)
@@ -214,15 +218,22 @@ play_button = Button(control_frame, image=play_icon , borderwidth=0, command= pl
 pause_button = Button(control_frame, image=pause_icon , borderwidth=0, command=lambda:pause(paused), height = 50, width = 50)
 next_button = Button(control_frame, image=next_icon , borderwidth=0, command=next_song, height = 50, width = 50)
 prev_button = Button(control_frame, image=prev_icon , borderwidth=0, command=prev_song, height = 50, width = 50)
+stop_button = Button(control_frame, image=stop_icon , borderwidth=0, command=stop, height = 50, width = 50)
 
 play_button.grid(row=0, column=0,padx=10,pady=20)
 pause_button.grid(row=0, column=1, padx=10,pady=20)
 next_button.grid(row=0, column=2, padx=10,pady=20)
-prev_button.grid(row=0, column=3, padx=10,pady=20) 
+prev_button.grid(row=0, column=3, padx=10,pady=20)
+stop_button.grid(row=0, column=4, padx=10,pady=20)
 
 #creating a menu
 my_menu = Menu(window)
 window.config(menu=my_menu)
+
+file_menu = Menu(my_menu)
+my_menu.add_cascade(label="File", menu=file_menu)
+file_menu.add_command(label="Load Playlist",command=load_playlist)
+file_menu.add_command(label="Save PlayList",command=saving_playlist)
 
 add_song_menu = Menu(my_menu)
 my_menu.add_cascade(label="Add Songs", menu=add_song_menu)
