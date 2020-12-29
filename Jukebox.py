@@ -102,32 +102,37 @@ def song_dur():#method that updates the status bar
     formated_current_time = time.strftime('%M:%S', time.gmtime(current_time))
 
     current_song = list_box.curselection()# this return a number(tuple)
+    try:
+        song = list_box.get(current_song)# get the song to find the duration
     
-    song = list_box.get(current_song)# get the song to find the duration
-    song = MP3(song)
-    global duration #making global so that it can be accessed in slider 
-    duration = song.info.length
-    formated_duration = time.strftime('%M:%S', time.gmtime(duration))
+    
+        song = MP3(song)
+        global duration #making global so that it can be accessed in slider 
+        duration = song.info.length
+        formated_duration = time.strftime('%M:%S', time.gmtime(duration))
 
     
-    current_time+=1# updating current time to cover up time diff between slider updation and actual time
-    k=slider.get()
-    if int(k)==int(duration):
-        statusbar.config(text=f'{formated_duration} / {formated_duration}')
-    elif paused:
+        current_time+=1# updating current time to cover up time diff between slider updation and actual time
+        k=slider.get()
+        if int(k)==int(duration):
+            statusbar.config(text=f'{formated_duration} / {formated_duration}')
+        elif paused:
+            pass
+        elif int(slider.get())==current_time:
+            slider_length = int(duration)
+            slider.config(to=slider_length, value=current_time)
+        else:
+            slider_length = int(duration)
+            slider.config(to=slider_length, value=slider.get())
+
+            formated_current_time = time.strftime('%M:%S', time.gmtime(int(slider.get())))
+            statusbar.config(text=f'{formated_current_time} / {formated_duration}')
+            next_time = int(slider.get())
+            next_time+=1
+            slider.config(value=next_time)
+
+    except:
         pass
-    elif int(slider.get())==current_time:
-        slider_length = int(duration)
-        slider.config(to=slider_length, value=current_time)
-    else:
-        slider_length = int(duration)
-        slider.config(to=slider_length, value=slider.get())
-
-        formated_current_time = time.strftime('%M:%S', time.gmtime(int(slider.get())))
-        statusbar.config(text=f'{formated_current_time} / {formated_duration}')
-        next_time = int(slider.get())
-        next_time+=1
-        slider.config(value=next_time)
         
     
     statusbar.after(1000,song_dur)#updating timer after every second
