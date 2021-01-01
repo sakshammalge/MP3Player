@@ -207,7 +207,7 @@ stop_icon = PhotoImage(file='icons/stopB.png')
 slider = ttk.Scale(master_frame, from_=0, to=100, orient=HORIZONTAL, value=0, command=slide, length=450)
 slider.grid(row=1,column=0,pady=10)
 
-vol_slider = ttk.Scale(volume_frame, from_=0, to=1, orient=VERTICAL, value=1, command=volume, length=135)
+vol_slider = ttk.Scale(volume_frame, from_=1, to=0, orient=VERTICAL, value=1, command=volume, length=135)
 vol_slider.pack(pady=10)
 
 
