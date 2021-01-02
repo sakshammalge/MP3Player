@@ -16,13 +16,17 @@ window.iconphoto(False, PhotoImage(file='icons/icon.png'))
 pygame.mixer.init()
 
 global files
-files = "playlists/default.txt"
-
+files = ""
 #methods used for controls
 
 def saving_playlist(file):
     list_data = list_box.get(0,END)
-    with open(file, "w", encoding="utf-8") as file:
+    try:
+        with open(file, "w", encoding="utf-8") as file:
+            for d in list_data:
+                file.write(d + "\n")
+    except:
+        file = filedialog.asksaveasfile(defaultextension = ".txt",mode="w")
         for d in list_data:
             file.write(d + "\n")
         
