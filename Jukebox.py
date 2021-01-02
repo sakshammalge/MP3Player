@@ -15,15 +15,23 @@ window.iconphoto(False, PhotoImage(file='icons/icon.png'))
 
 pygame.mixer.init()
 
+global files
+files = "playlists/default.txt"
+
 #methods used for controls
-def saving_playlist():
+
+def saving_playlist(file):
     list_data = list_box.get(0,END)
-    with open("save.txt", "w", encoding="utf-8") as file:
+    with open(file, "w", encoding="utf-8") as file:
         for d in list_data:
             file.write(d + "\n")
-
+        
+        
 def load_playlist():
-    with open("save.txt", "r", encoding="utf-8") as file:
+    file = filedialog.askopenfilename(initialdir='playlists/',title="Choose A Playlist", filetypes=(("Text Files","*.txt"),))
+    global files
+    files = file
+    with open(file, "r", encoding="utf-8") as file:
         for f in file:
             list_box.insert(END, f.strip())
 
@@ -238,7 +246,7 @@ window.config(menu=my_menu)
 file_menu = Menu(my_menu)
 my_menu.add_cascade(label="File", menu=file_menu)
 file_menu.add_command(label="Load Playlist",command=load_playlist)
-file_menu.add_command(label="Save PlayList",command=saving_playlist)
+file_menu.add_command(label="Save PlayList",command=lambda:saving_playlist(files))
 
 add_song_menu = Menu(my_menu)
 my_menu.add_cascade(label="Add Songs", menu=add_song_menu)
